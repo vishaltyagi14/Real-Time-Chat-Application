@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/stylesheets/signup.css">
+</head>
+<body>
+    <div class="main">
+        <div class="intro">
+
+            <div class="logocont">
+                <div class="logo">
+                <img id="logoimg" src="/images/chat.png" alt="">
+            </div>
+            </div>
+
+            <div class="heading">
+                <h2>Create Account</h2>
+            </div>
+
+            <div class="para">
+                <p>Start chatting with friends and family</p>
+            </div>
+
+        </div>
+        
+        <div class="auth">
+            <form action="/register" method="post">
+                <div class="contain">
+                    <label for="name">Full Name</label>
+                    <input type="text" name="name" id="name" required placeholder="Enter your full name">
+                </div>
+                
+                <div class="contain">
+                    <label for="username">Choose Username</label>
+                    <input type="text" name="username" id="username" required placeholder="Enter a username">
+                </div>
+
+                <div class="contain">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" required placeholder="Enter your email"> 
+                </div>
+
+
+                <div class="submit">
+                    <input type="submit" value="Sign Up  →">
+                </div>
+
+                <p>Already have an account? <a href="/login">Log in</a></p>
+            </form>
+        </div>
+
+        <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
+
+    </div>
+</body>
+</html>

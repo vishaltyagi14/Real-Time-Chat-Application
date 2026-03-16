@@ -1,0 +1,179 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* border: 1px solid red; */
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    rgb(26, 127, 251),
+    rgb(126, 40, 255),
+    rgb(199, 14, 255)
+  );
+  color: white;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+.nav{
+    /* border: 1px solid red; */
+    align-self: flex-start;
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.nav:hover{
+    background-color: rgba(69, 69, 69, 0.317);
+}
+.main {
+  padding-top: 20px;
+  min-height: 100vh;
+  width: 90vw;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+}
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.logocont {
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  padding-bottom: 12px;
+}
+.logo {
+  background-color: white;
+  width: 100px;
+  border-radius: 23px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 12px 15px #292a2fac;
+}
+#logoimg {
+  height: 40px;
+  filter: brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2000%)
+    hue-rotate(215deg);
+  cursor: pointer;
+}
+.heading {
+  /* border: 1px solid red; */
+  text-align: center;
+  font-size: 23px;
+}
+.para {
+  /* border: 1px solid red; */
+  font-size: clamp(12px, 5vw, 24px);
+  color: rgb(213, 213, 213);
+}
+
+.auth {
+  /* border: 1px solid red; */
+  border-radius: 21px;
+  /* width: 420px; */
+  width: min(450px, 95%);
+
+  background-color: white;
+  height: 280px;
+  box-shadow: 0 0 10px #292a2fac;
+}
+
+.auth a {
+  text-decoration: none;
+  color: rgb(0, 76, 227);
+}
+.auth form p {
+  text-decoration: none;
+  color: rgb(107, 107, 107);
+}
+.auth input {
+  height: 57px;
+  width: 370px;
+  border-radius: 14px;
+  border: 1px solid rgb(163, 163, 163);
+  background-color: rgba(244, 244, 244, 0.847);
+  padding-left: 12px;
+}
+.otps{
+    display: flex;
+    gap: 10px;
+}
+.contain {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    color: rgb(0, 0, 0);
+    /* border: 1px solid red; */
+    height: 280px;
+    padding-top: 30px;
+}
+.auth input.num {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid rgb(163, 163, 163);
+  background-color: rgba(244, 244, 244, 0.847);
+  border-radius: 10px;
+  width: 60px;
+  height: 60px;
+  padding-left: 0;
+  font-size: 24px;
+}
+.auth input[type="submit"] {
+  cursor: pointer;
+  font-size: 17px;
+  background: linear-gradient(
+    135deg,
+    rgb(26, 127, 251),
+    rgb(126, 40, 255),
+    rgb(199, 14, 255)
+  );
+  background-size: 200% 200%;
+  background-position: 0 50%;
+  transition: background-position 0.5s ease;
+  color: white;
+}
+.auth input[type="submit"]:hover {
+  background-position: 40% 50%;
+}
+.submit {
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+.contain p {
+  color: rgb(96, 96, 96);
+}
+.timer {
+  border: 1px solid rgb(202, 202, 202);
+  background-color: rgba(220, 220, 220, 0.4);
+  backdrop-filter: blur(8px);
+  width: min(450px, 95%);
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.timer p{
+    color: white;
+}

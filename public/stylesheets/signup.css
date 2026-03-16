@@ -1,0 +1,142 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 118vh;
+  background: linear-gradient(
+    135deg,
+    rgb(26, 127, 251),
+    rgb(126, 40, 255),
+    rgb(199, 14, 255)
+  );
+  color: white;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.main{
+    padding-top: 60px;
+    min-height: 100vh;
+    width: 90vw;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+}
+.intro{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+.logocont{
+    /* border: 1px solid red; */
+    display: flex;
+    justify-content: center;
+    padding-bottom: 12px;
+}
+.logo {
+  background-color: white;
+  width: 100px;
+  border-radius: 23px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 12px 15px #292a2fac;
+}
+#logoimg {
+  height: 40px;
+  filter: brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2000%)
+    hue-rotate(215deg);
+  cursor: pointer;
+}
+.heading{
+    /* border: 1px solid red; */
+    text-align: center;
+    font-size: 23px;
+}
+.para{
+    /* border: 1px solid red; */
+    font-size: clamp(12px,5vw,24px);
+    color: rgb(213, 213, 213);
+}
+
+.auth{
+    /* border: 1px solid red; */
+    border-radius: 21px;
+    /* width: 420px; */
+    width: min(420px, 95%);
+
+    background-color: white;
+    height: 490px;
+    box-shadow: 0 0 10px #292a2fac;
+}
+.auth form{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    color: rgb(0, 0, 0);
+    /* border: 1px solid red; */
+    height: 490px;
+    padding-top: 30px;
+}
+.auth form a{
+    text-decoration: none;
+    color: rgb(0, 76, 227);
+}
+.auth form p{
+    text-decoration: none;
+    color: rgb(107, 107, 107);
+}
+.auth form input{
+    height: 57px;
+    width: 370px;
+    border-radius: 14px;
+    border: 1px solid rgb(163, 163, 163);
+    background-color: rgba(244, 244, 244, 0.847);
+    padding-left: 12px;
+}
+.contain{
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.contain label{
+    padding-left: 3px;
+}
+.auth form input{
+    outline: none;
+}
+.auth form input[type="submit"]{
+    cursor: pointer;
+    font-size: 17px;
+    background: linear-gradient(
+        135deg,
+        rgb(26, 127, 251),
+        rgb(126, 40, 255),
+        rgb(199, 14, 255)
+        );
+        background-size: 200% 200%;
+        background-position: 0 50%;
+    transition: background-position 0.5s ease;
+    color: white;
+}
+.auth form input[type="submit"]:hover{
+    background-position: 40% 50%;
+}
+.submit{
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+.main p{
+    color: rgb(223, 223, 223);
+}

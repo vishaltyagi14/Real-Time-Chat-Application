@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+    <link rel="stylesheet" href="/stylesheets/login.css">
+</head>
+<body>
+    <div class="main">
+        <div class="intro">
+
+            <div class="logocont">
+                <div class="logo">
+                <img id="logoimg" src="images/chat.png" alt="">
+            </div>
+            </div>
+
+            <div class="heading">
+                <h2>Welcome Back</h2>
+            </div>
+
+            <div class="para">
+                <p>Sign in to continue your conversations</p>
+            </div>
+
+        </div>
+        
+        <div class="auth">
+            <form action="/loginUser" method="post">
+                <div class="contain">
+                    <label for="name">Username or Email</label>
+                    <input type="text" name="name" id="name" required placeholder="Enter your username or email">
+                </div>
+
+                <div class="submit">
+                    <input type="submit" value="Continue   →">
+                </div>
+
+                <p>Don't have an account? <a href="/signup"> Sign Up</a></p>
+            </form>
+        </div>
+
+        <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
+
+    </div>
+</body>
+</html>

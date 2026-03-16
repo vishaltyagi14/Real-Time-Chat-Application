@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>verify-otp</title>
+    <link rel="stylesheet" href="/stylesheets/verify-otp.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="/login" style="text-decoration: none; color: white;"><div class="back">
+            <p">←  Back</p>
+        </div></a>
+    </div>
+    <div class="main">
+        <div class="intro">
+
+            <div class="logocont">
+                <div class="logo">
+                <img id="logoimg" src="/images/chat.png" alt="">
+            </div>
+            </div>
+
+            <div class="heading">
+                <h2>Verify OTP</h2>
+            </div>
+
+            <div class="para">
+                <p>Enter the verification code we sent to</p>
+            </div>
+
+        </div>
+        
+        <div class="auth">
+                <div class="contain">
+                    <div class="otps">
+                        <input  type="text" maxlength="1" class="num" />
+                        <input  type="text" maxlength="1" class="num" />
+                        <input  type="text" maxlength="1" class="num" />
+                        <input  type="text" maxlength="1" class="num" />
+                        <input  type="text" maxlength="1" class="num" />
+                        <input  type="text" maxlength="1" class="num" />
+                    </div>
+                    
+                    <div class="submit">
+                        <input type="submit" value="Verify &Continue" id ="submit">
+                    </div>
+                    
+                    <p>Didn't receive the code? <a href="#"> Resend Code</a></p>
+                </div>
+        </div>
+
+        <div class="timer">
+            <p>
+                🔒 The code will expire in 10 minutes
+            </p>
+        </div>
+
+    </div>
+    <script src="/javascripts/verify-otp.js"></script>
+</body>
+</html>

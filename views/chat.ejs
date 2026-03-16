@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="/stylesheets/chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #075e54;
+            --primary-light: #128c7e;
+            --primary-dark: #054a40;
+            --secondary: #25d366;
+            --bg-light: #f0f2f5;
+            --text-primary: #111b21;
+            --text-secondary: #65676b;
+            --border: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="allUsers">
+                <h2 style="color: #0062db; position: relative; left: 21px; top: 10px;">All Users</h2>
+                <div class="searchUsers">
+                    <i style="position: absolute; z-index: 2;" class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" name="search" id="searchUser" placeholder="Search Users...">
+                </div>
+                <div class="dbUsers">
+                    <% users.forEach(user => { %>
+                    <% if (user._id.toString() !== currentUser && !addedUserIds.includes(user._id.toString())) { %>
+                    <div class="msg">
+                        <div class="profile avatar-badge">
+                            <div class="avatar" style="background: hsl(<%= user._id.toString().split('').reduce((a,b)=>a+b.charCodeAt(0),0) % 360 %>, 70%, 60%);" title="<%= user.name %>">
+                                <%= user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) %>
+                            </div>
+                        </div>
+
+                        <div class="Container">
+                            <div class="dBname">
+                                <h4><%= user.name %></h4>
+                            </div>
+                        
+                            <div class="username">
+                                <span>@<%= user.username%></span>
+                            </div>
+
+                        </div>
+                        <form action="/adduser/<%= user._id%>" method="post"><button type="submit" class="add-btn" onclick="this.disabled=true; this.textContent='Adding...'" title="Add <%= user.name %>">+</button></form>
+                    </div>
+                    <hr>
+                    <% } %>
+                    <% }) %>
+                </div>
+            </div>
+            <div class="up">
+                <div class="bar">
+                    <h2>Messages</h2>
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </div>
+                <div class="search-box">
+                    <i style="position: absolute; z-index: 2;" class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="search" placeholder="Search Conversations...">
+                </div>
+            </div>
+            <div class="down">
+                <div class="friends">
+
+<% if (friends && friends.addedUser) { %>
+
+<% friends.addedUser.forEach(f => { %>
+
+<div class="msg friend-card" data-id="<%= f._id %>" title="Chat with <%= f.name %>">
+    <div class="profile avatar-badge">
+        <% if (f.profilePicture) { %>
+        <img class="friend-avatar" src="<%= f.profilePicture %>" alt="<%= f.name %>" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;">
+        <% } else { %>
+        <div class="avatar" style="background: hsl(<%= f._id.toString().split('').reduce((a,b)=>a+b.charCodeAt(0),0) % 360 %>, 70%, 60%);">
+            <%= f.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) %>
+        </div>
+        <% } %>
+    </div>
+
+    <div class="Container">
+        <div class="dBname">
+            <h4><%= f.name %></h4>
+        </div>
+        <% if (f.lastMessage) { %>
+        <div class="last-message">
+            <p><%= f.lastMessage.length > 30 ? f.lastMessage.substring(0, 30) + '...' : f.lastMessage %></p>
+        </div>
+        <% } %>
+    </div>
+    
+    <div class="friend-actions">
+        <button class="delete-friend-btn" data-friend-id="<%= f._id %>" title="Remove friend">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+    </div>
+</div>
+
+<hr>
+
+<% }) %>
+
+<% } %>
+
+</div>
+    <div class="addNew">
+        <img id="addNew" src="/images/add-message.png" alt="Add user">
+    </div>
+
+    
+</div>
+</div>
+
+        <div class="right">
+            <div class="head">
+                <div class="headcontainer">
+                    <div class="profile avatar-badge">
+                        <div class="avatar" id="chatAvatar" style="background: #128c7e;">
+                            <span>CH</span>
+                        </div>
+                    </div>
+                    <div class="headname">
+                        <h4 id="chatUserName">Select a chat</h4>
+                        <div class="headtext">
+                            <div class="online"></div>
+                            <span id="onlineStatus">Online</span>
+                        </div>
+                    </div>
+                    <div class="header-icons">
+                        <i class="fa-solid fa-user" id="openProfileBtn" title="My Profile" style="cursor: pointer; color: var(--primary); font-size: 1.2rem;"></i>
+                        <i class="fa-solid fa-trash" id="deleteChatBtn" title="Delete Chat" style="cursor: pointer; color: #d32f2f; font-size: 1.2rem; display: none;"></i>
+                        <i class="fa-solid fa-user-minus" id="removeFriendBtn" title="Remove Friend" style="cursor: pointer; color: #ff6f00; font-size: 1.2rem; display: none;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat">
+            </div>
+
+            <div class="send">
+                <div class="attr">
+                    <i class="fa-regular fa-face-smile" id="ico"></i>
+                    <i class="fa-solid fa-paperclip" id="ico"></i>
+                    <input type="text" id="message" placeholder="Write your message...">
+                    <i class="fa-solid fa-paper-plane" id="msg" style="color: #1a7ffb;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="profile-modal">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2>My Profile</h2>
+            <i class="fa-solid fa-xmark" id="closeProfile" style="cursor: pointer;"></i>
+        </div>
+        <div class="profile-body">
+            <div class="profile-pic-section">
+                <div class="profile-pic-container">
+                    <div id="profilePicDisplay" class="profile-pic"></div>
+                    <label for="pictureInput" class="edit-pic-btn">
+                        <i class="fa-solid fa-camera"></i>
+                    </label>
+                    <input type="file" id="pictureInput" accept="image/*" style="display: none;">
+                </div>
+            </div>
+            <form id="profileForm" class="profile-form">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="nameInput" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="emailInput" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="phoneInput" placeholder="+1234567890">
+                </div>
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="bioInput" maxlength="150" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Save Changes</button>
+                    <button type="button" class="btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const CURRENT_USER = "<%= currentUser %>";
+    const CURRENT_USER_DATA = <%- JSON.stringify(currentUserData) %>;
+</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/profile.js"></script>
+    <script src="/javascripts/chat.js"></script>
+</body>
+</html>
