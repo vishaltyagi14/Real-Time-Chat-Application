@@ -81,25 +81,21 @@ module.exports.updateProfilePicture = async (req, res) => {
 module.exports.adduser = async (req, res) => {
     try{
         const { addId } = req.params;
-        
-        // Validate IDs
         if (!addId || !req.user._id) {
             return res.status(400).send("Invalid user ID");
         }
-        
-        // Prevent self-add
         if (addId === req.user._id.toString()) {
             return res.status(400).send("Cannot add yourself");
         }
         
-        // Verify added user exists
         const userExists = await user.findById(addId);
         if (!userExists) {
             return res.status(404).send("User not found");
         }
         
+        console.log(req.user.id)
         let added= await adduser.findOneAndUpdate(
-            { loggedUser: req.user._id }, 
+            { loggedUser: req.user._id },
             { $addToSet: { addedUser: addId } }, 
             { upsert: true, new: true }
         );

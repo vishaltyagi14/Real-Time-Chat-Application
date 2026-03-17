@@ -31,18 +31,18 @@ app.use((req, res, next) => {
 
 app.use('/',routes)
 
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Error:', err);
     res.status(err.status || 500).send(err.message || 'Server Error');
 });
 
-// 404 handler
 app.use((req, res) => {
     res.status(404).send('Page Not Found');
 });
 
-
+io.on("connection",(socket)=>{
+    console.log("user Connected :"+socket.id)
+})
 
 server.listen(3000, () => {
     console.log('Server running on port 3000');

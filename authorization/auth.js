@@ -119,13 +119,6 @@ module.exports.verLogin = async (req, res) => {
             });
         }
         
-        // // Check if user account is verified
-        // if (!user.verified) {
-        //     return res.status(400).json({
-        //         message: "Account not verified. Please verify with OTP first."
-        //     });
-        // }
-        
         const otp= await sendOtp(user.email);
             if (!otp) {
                 return res.status(500).json({
