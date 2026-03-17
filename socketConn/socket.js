@@ -1,3 +1,4 @@
+const Message = require("../models/messages")
 let users = {};
 
 module.exports = (io) => {
@@ -10,20 +11,24 @@ module.exports = (io) => {
             // console.log("Users:", users);
         });
 
-        socket.on("send-message", ({ message, to, from }) => {
-    // console.log("📩 Message:", message, "To:", to, "From:", from);
+        socket.on("send-message", async ({ message, to, from }) => {
+            // console.log("📩 Message:", message, "To:", to, "From:", from);
+            const newmsg = await Message.create({
+                sender: from,
+                receiver: to,
+                text: message
+            })
+            const receiverSocket = users[to];
 
-    const receiverSocket = users[to];
-
-    if (receiverSocket) {
-        io.to(receiverSocket).emit("receive-msg", {
-    message: message,
-    from: from
-})
-    } else {
-        console.log("❌ User not connected:", to);
-    }
-});
+            if (receiverSocket) {
+                io.to(receiverSocket).emit("receive-msg", {
+                    message: newmsg.text,
+                    from: from
+                })
+            } else {
+                console.log("❌ User not connected:", to);
+            }
+        });
 
     });
 
