@@ -4,7 +4,6 @@ if (typeof document !== 'undefined') { const addBtn = document.querySelector(".a
 
     });
 }
-const socket = io();
 
 const input = document.getElementById("message");
 const sendBtn = document.getElementById("msg");
@@ -17,9 +16,6 @@ const removeFriendBtn = document.getElementById("removeFriendBtn");
 
 let receiverId = null;
 
-socket.emit("join", CURRENT_USER);
-
-// Get initials from name
 function getInitials(name) {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 }
@@ -208,46 +204,6 @@ attachFriendCardListeners();
 deleteChatBtn.addEventListener("click", handleDeleteChat);
 removeFriendBtn.addEventListener("click", handleRemoveFriend);
 
-// send message
-sendBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    
-    if (!receiverId) {
-        alert("Please select a chat first");
-        input.focus();
-        return;
-    }
-
-    const message = input.value.trim();
-
-    if (!message) {
-        input.focus();
-        return;
-    }
-
-    if (!CURRENT_USER) {
-        alert("Invalid session. Please login again.");
-        return;
-    }
-
-    socket.emit("private_message", {
-        senderId: CURRENT_USER,
-        receiverId,
-        message
-    });
-
-    addMessage(message, "sent");
-    updateFriendLastMessage(receiverId, message);
-
-    input.value = "";
-    input.focus();
-    
-    // Auto scroll to bottom
-    setTimeout(() => {
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 50);
-});
-
 // Allow Enter key to send message
 input.addEventListener("keypress", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -256,30 +212,6 @@ input.addEventListener("keypress", (e) => {
     }
 });
 
-// receive message
-socket.on("receive_message", (data) => {
-    if (data.senderId === receiverId || receiverId === data.senderId) {
-        addMessage(data.message, "received");
-        updateFriendLastMessage(data.senderId, data.message);
-        setTimeout(() => {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }, 50);
-    }
-});
-
-socket.on("connect_error", (error) => {
-    console.error("Socket connection error:", error);
-});
-
-// Handle profile picture updates from other users
-socket.on("profile_picture_updated", (data) => {
-    updateFriendProfilePicture(data.userId, data.profilePicture);
-    
-    // If this is the currently viewed chat, update the header avatar
-    if (receiverId === data.userId) {
-        updateChatAvatarWithPicture(data.profilePicture);
-    }
-});
 
 // Update friend card with last message
 function updateFriendLastMessage(friendId, message) {
@@ -351,7 +283,7 @@ function updateChatAvatarWithPicture(profilePicture) {
     }
 }
 
-// render message
+
 function addMessage(text, type) {
     if (!chatBox) return;
     
@@ -363,9 +295,48 @@ function addMessage(text, type) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Auto-attach listeners when DOM updates
 const observer = new MutationObserver(() => {
     attachFriendCardListeners();
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
+
+const socket = io();
+
+socket.emit("register", CURRENT_USER);
+
+sendBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (!receiverId) {
+        alert("Select a chat first");
+        return;
+    }
+
+    const message = input.value.trim();
+    if (!message) return;
+
+    socket.emit("send-message", {
+        message,
+        to: receiverId,
+        from: CURRENT_USER
+    });
+
+    addMessage(message, "sent");
+    input.value = "";
+    setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }, 50);
+});
+
+socket.on("receive-msg", (data) => {
+    updateFriendLastMessage(data.from, data.message);
+
+    if (data.from === receiverId) {
+        addMessage(data.message, "received");
+
+        setTimeout(() => {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 50);
+    }
+});

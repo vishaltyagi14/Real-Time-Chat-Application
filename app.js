@@ -12,6 +12,7 @@ const path= require('path')
 const routes= require('./routes/router')
 const transporter = require("./generators/mail");
 const socket = require('./socketConn/socket')
+socket(io)
 require('./config/db');
 
 app.use(express.json())
@@ -39,10 +40,6 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
     res.status(404).send('Page Not Found');
 });
-
-io.on("connection",(socket)=>{
-    console.log("user Connected :"+socket.id)
-})
 
 server.listen(3000, () => {
     console.log('Server running on port 3000');
