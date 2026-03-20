@@ -3,13 +3,14 @@ const router = express.Router();
 const home= require('../controllers/home')
 const auth= require('../authorization/auth')
 const {isLogged}= require('../middlewares/isLogged')
+const {checkAuth}= require('../middlewares/isAuth')
 const user = require('../models/register')
 const chatController = require("../controllers/chatController");
 
 router.get("/messages/:senderId/:receiverId", chatController.getMessages);
 
 router.get('/',home.home);
-router.get('/login',home.login)
+router.get('/login',checkAuth,home.login)
 router.get('/signup',home.signup)
 router.get('/logout',auth.logout)
 router.get('/verify-otp',home.otp)
