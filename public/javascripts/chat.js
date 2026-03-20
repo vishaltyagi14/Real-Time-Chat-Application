@@ -7,6 +7,7 @@ if (typeof document !== 'undefined') { const addBtn = document.querySelector(".a
 
 const input = document.getElementById("message");
 const sendBtn = document.getElementById("msg");
+const friend= document.querySelector(".friend-card") 
 const chatBox = document.querySelector(".chat");
 const chatUserName = document.getElementById("chatUserName");
 const onlineStatus = document.getElementById("onlineStatus");
@@ -107,7 +108,7 @@ async function handleFriendCardClick(e) {
 
 // Handle delete friend button click
 async function handleDeleteFriend(e) {
-    e.stopPropagation(); // Prevent triggering friend card click
+    e.stopPropagation(); 
     
     const friendId = e.currentTarget.dataset.friendId;
     const friendCard = document.querySelector(`.friend-card[data-id="${friendId}"]`);
@@ -146,7 +147,10 @@ async function handleDeleteFriend(e) {
 }
 
 // Handle delete chat button click
-async function handleDeleteChat() {
+async function handleDeleteChat(e) {
+    const card= e.currentTarget;
+    receiverId = friend.dataset.id;
+    console.log(receiverId)
     if (!receiverId) {
         alert("No chat selected");
         return;

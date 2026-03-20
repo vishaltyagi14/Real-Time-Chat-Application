@@ -260,3 +260,7 @@ module.exports.verifyOtp= async (req,res)=>{
         res.status(500).json({ message: "Server error" });
     }
 }
+module.exports.logout = (req,res)=>{
+    res.cookie('token',"")
+    res.redirect('/login')
+}
