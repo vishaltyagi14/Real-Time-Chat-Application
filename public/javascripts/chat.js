@@ -110,7 +110,18 @@ async function handleFriendCardClick(e) {
 async function handleDeleteFriend(e) {
     e.stopPropagation(); 
     
-    const friendId = e.currentTarget.dataset.friendId;
+    const btn = e.currentTarget;
+    const friendId = btn.dataset.friendId;  // Changed from dataset.id to dataset.friendId
+    
+    console.log("Delete button clicked");
+    console.log("Friend ID:", friendId);
+    
+    if (!friendId) {
+        console.error("Friend ID not found on button");
+        console.log("Button data attributes:", btn.dataset);
+        return;
+    }
+    
     const friendCard = document.querySelector(`.friend-card[data-id="${friendId}"]`);
     const friendName = friendCard?.querySelector(".dBname h4")?.textContent || "Friend";
     
@@ -123,12 +134,20 @@ async function handleDeleteFriend(e) {
             method: 'DELETE'
         });
         
+        console.log("Response status:", response.status);
+        const data = await response.json();
+        console.log("Response data:", data);
+        
         if (!response.ok) {
             throw new Error('Failed to remove friend');
         }
         
-        // Remove friend card from UI
+        // Remove friend card from friends list
         friendCard?.remove();
+        
+        // Also remove from all users list
+        const allUsersCard = document.querySelector(`.allUsers .friend-card[data-id="${friendId}"]`);
+        allUsersCard?.remove();
         
         // If this friend was selected, clear the chat
         if (receiverId === friendId) {
@@ -143,6 +162,19 @@ async function handleDeleteFriend(e) {
     } catch (error) {
         console.error('Error removing friend:', error);
         alert('Failed to remove friend. Please try again.');
+    }
+}
+
+// Handle remove friend from header
+function handleRemoveFriend() {
+    if (!receiverId) {
+        alert("No friend selected");
+        return;
+    }
+    
+    const deleteBtn = document.querySelector(`.delete-friend-btn[data-friend-id="${receiverId}"]`);  // Changed to data-friend-id
+    if (deleteBtn) {
+        deleteBtn.click();
     }
 }
 

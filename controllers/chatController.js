@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const messageModel = require("../models/messages");
 const connectedModel = require("../models/connected");
 
@@ -57,19 +58,39 @@ module.exports.removeFriend = async (req, res) => {
     try {
         const { friendId } = req.params;
         const currentUserId = req.user._id;
+        
         if (!friendId) {
             return res.status(400).json({ message: "Friend ID is required" });
         }
-        await connectedModel.deleteMany({
+
+        const friendObjectId = new mongoose.Types.ObjectId(friendId);
+        
+        // Remove friend from current user's friends array
+        await connectedModel.findByIdAndUpdate(
+            currentUserId,
+            { $pull: { addedUser: friendObjectId } },
+            { new: true }
+        );
+        
+        // Remove current user from friend's friends array
+        await connectedModel.findByIdAndUpdate(
+            friendObjectId,
+            { $pull: { addedUser: currentUserId } },
+            { new: true }
+        );
+
+        // Also delete all messages between them
+        await messageModel.deleteMany({
             $or: [
-                { loggedUser: currentUserId, addedUser: friendId },
-                { loggedUser: friendId, addedUser: currentUserId }
+                { sender: currentUserId, receiver: friendObjectId },
+                { sender: friendObjectId, receiver: currentUserId }
             ]
         });
+
         res.json({
             success: true,
-            message: "Friend Deleted Successfully",
-        })
+            message: "Friend Deleted Successfully"
+        });
     } catch (err) {
         console.log("Delete Friend error:", err);
         res.status(500).json({ message: "Error Removing Friend" });
