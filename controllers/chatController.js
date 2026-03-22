@@ -28,7 +28,8 @@ module.exports.getMessages = async (req, res) => {
 module.exports.deleteMessages = async (req, res) => {
     try {
 
-        const { receiverId } = req.params;
+        const { friendId } = req.params;
+const receiverId = friendId;
         const currentUserId = req.user._id;
 
         if (!receiverId) {
@@ -54,45 +55,45 @@ module.exports.deleteMessages = async (req, res) => {
     }
 };
 
-module.exports.removeFriend = async (req, res) => {
-    try {
-        const { friendId } = req.params;
-        const currentUserId = req.user._id;
+// module.exports.removeFriend = async (req, res) => {
+//     try {
+//         const { friendId } = req.params;
+//         const currentUserId = req.user._id;
         
-        if (!friendId) {
-            return res.status(400).json({ message: "Friend ID is required" });
-        }
+//         if (!friendId) {
+//             return res.status(400).json({ message: "Friend ID is required" });
+//         }
 
-        const friendObjectId = new mongoose.Types.ObjectId(friendId);
+//         const friendObjectId = new mongoose.Types.ObjectId(friendId);
         
-        // Remove friend from current user's friends array
-        await connectedModel.findByIdAndUpdate(
-            currentUserId,
-            { $pull: { addedUser: friendObjectId } },
-            { new: true }
-        );
+//         // Remove friend from current user's friends array
+//         await connectedModel.findByIdAndUpdate(
+//             currentUserId,
+//             { $pull: { addedUser: friendObjectId } },
+//             { new: true }
+//         );
         
-        // Remove current user from friend's friends array
-        await connectedModel.findByIdAndUpdate(
-            friendObjectId,
-            { $pull: { addedUser: currentUserId } },
-            { new: true }
-        );
+//         // Remove current user from friend's friends array
+//         await connectedModel.findByIdAndUpdate(
+//             friendObjectId,
+//             { $pull: { addedUser: currentUserId } },
+//             { new: true }
+//         );
 
-        // Also delete all messages between them
-        await messageModel.deleteMany({
-            $or: [
-                { sender: currentUserId, receiver: friendObjectId },
-                { sender: friendObjectId, receiver: currentUserId }
-            ]
-        });
+//         // Also delete all messages between them
+//         await messageModel.deleteMany({
+//             $or: [
+//                 { sender: currentUserId, receiver: friendObjectId },
+//                 { sender: friendObjectId, receiver: currentUserId }
+//             ]
+//         });
 
-        res.json({
-            success: true,
-            message: "Friend Deleted Successfully"
-        });
-    } catch (err) {
-        console.log("Delete Friend error:", err);
-        res.status(500).json({ message: "Error Removing Friend" });
-    }
-}
+//         res.json({
+//             success: true,
+//             message: "Friend Deleted Successfully"
+//         });
+//     } catch (err) {
+//         console.log("Delete Friend error:", err);
+//         res.status(500).json({ message: "Error Removing Friend" });
+//     }
+// }

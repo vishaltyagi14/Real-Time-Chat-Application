@@ -11,7 +11,7 @@
             --primary: #009dff;
             --primary-light: #12678c;
             --primary-dark: #05334a;
-            --secondary: #25d3c4;
+            --secondary: #009dff;
             --bg-light: #f0f2f5;
             --text-primary: #111b21;
             --text-secondary: #65676b;
@@ -26,9 +26,13 @@
                 <h2 style="color: #0062db; position: relative; left: 21px; top: 10px;">All Users</h2>
                 <div class="searchUsers">
                     <i style="position: absolute; z-index: 2;" class="fa-solid fa-magnifying-glass"></i>
-                    <input type="search" name="search" id="searchUser" placeholder="Search Users...">
+                    <input type="search" name="search" id="searchUser" placeholder="Search Usersname...">
+                    <div class="results">
+                        <i class="fa-solid fa-xmark" id="closeAllSearch" style="cursor: pointer;"></i>
+                    </div>
                 </div>
                 <div class="dbUsers">
+                    &nbsp;
                     <% users.forEach(user => { %>
                     <% if (user._id.toString() !== currentUser && !addedUserIds.includes(user._id.toString())) { %>
                     <div class="msg">
@@ -141,7 +145,7 @@
 
             <div class="chat">
             </div>
-
+            <div class="encr"><h4><span style="color: #e0a000;">🔒Encryption</span> Enabled</h4></div>
             <div class="send">
                 <div class="attr">
                     <i class="fa-regular fa-face-smile" id="ico"></i>
@@ -203,6 +207,7 @@
     const CURRENT_USER = "<%= currentUser %>";
     const CURRENT_USER_DATA = <%- JSON.stringify(currentUserData) %>;
 </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/profile.js"></script>
     <script src="/javascripts/chat.js"></script>

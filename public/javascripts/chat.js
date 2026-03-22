@@ -62,6 +62,11 @@ function attachFriendCardListeners() {
     document.querySelectorAll(".friend-card").forEach(card => {
         card.removeEventListener("click", handleFriendCardClick);
         card.addEventListener("click", handleFriendCardClick);
+        // Load last message for this friend card (only once)
+        if (!card.dataset.messagesLoaded) {
+            loadLastMessageForFriend(card);
+            card.dataset.messagesLoaded = "true";
+        }
     });
     
     // Attach delete friend button listeners
@@ -69,6 +74,38 @@ function attachFriendCardListeners() {
         btn.removeEventListener("click", handleDeleteFriend);
         btn.addEventListener("click", handleDeleteFriend);
     });
+}
+
+async function loadLastMessageForFriend(cardElement) {
+    try {
+        const friendId = cardElement.dataset.id;
+        if (!friendId) return;
+        
+        const res = await fetch(`/messages/${CURRENT_USER}/${friendId}`);
+        if (!res.ok) return;
+        
+        const messages = await res.json();
+        if (messages.length === 0) return;
+        
+        // Get the last message
+        const lastMsg = messages[messages.length - 1];
+        
+        const otherUser = lastMsg.sender === CURRENT_USER ? lastMsg.receiver : lastMsg.sender;
+        const secretKey = "secure_" + [CURRENT_USER, otherUser].sort().join("_") + "_v1@2026";
+        
+        try {
+            const bytes = CryptoJS.AES.decrypt(lastMsg.text, secretKey);
+            const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+            
+            if (decrypted && decrypted.trim().length > 0) {
+                updateFriendLastMessage(friendId, decrypted);
+            }
+        } catch (err) {
+            // Silently fail if decryption fails
+        }
+    } catch (err) {
+        // Silently fail if fetching messages fails
+    }
 }
 
 async function handleFriendCardClick(e) {
@@ -88,14 +125,41 @@ async function handleFriendCardClick(e) {
         
         const messages = await res.json();
 
+        let lastDecryptedMsg = "";
+
         messages.forEach(msg => {
-            if (msg.sender.toString() === CURRENT_USER) {
-                addMessage(msg.text, "sent");
-            } else {
-                addMessage(msg.text, "received");
-            }
-        });
-        
+
+    const otherUser =
+        msg.sender === CURRENT_USER ? msg.receiver : msg.sender;
+
+    const secretKey =
+        "secure_" + [CURRENT_USER, otherUser].sort().join("_") + "_v1@2026";
+
+    let finalMsg;
+
+    try {
+        const bytes = CryptoJS.AES.decrypt(msg.text, secretKey);
+        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+        // ✅ only accept decrypted if valid
+        if (decrypted && decrypted.trim().length > 0) {
+            finalMsg = decrypted;
+        } else {
+            finalMsg = "[Unable to decrypt]";
+        }
+    } catch (err) {
+        finalMsg = "[Error decrypting]";
+    }
+
+    const type = msg.sender === CURRENT_USER ? "sent" : "received";
+
+    addMessage(finalMsg, type);
+    lastDecryptedMsg = finalMsg;
+});  
+        // Update friend card with last decrypted message
+        if (lastDecryptedMsg) {
+            updateFriendLastMessage(receiverId, lastDecryptedMsg);
+        }
         // Scroll to bottom
         setTimeout(() => {
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -182,7 +246,7 @@ function handleRemoveFriend() {
 async function handleDeleteChat(e) {
     const card= e.currentTarget;
     receiverId = friend.dataset.id;
-    console.log(receiverId)
+    // console.log(receiverId)
     if (!receiverId) {
         alert("No chat selected");
         return;
@@ -351,14 +415,16 @@ sendBtn.addEventListener("click", (e) => {
 
     const message = input.value.trim();
     if (!message) return;
-
+    const secretKey = "secure_" + [CURRENT_USER, receiverId].sort().join("_") + "_v1@2026";
+    const encrypted = CryptoJS.AES.encrypt(message,secretKey).toString()
     socket.emit("send-message", {
-        message,
+        message: encrypted,
         to: receiverId,
         from: CURRENT_USER
     });
 
     addMessage(message, "sent");
+    updateFriendLastMessage(receiverId, message);
     input.value = "";
     setTimeout(() => {
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -366,13 +432,59 @@ sendBtn.addEventListener("click", (e) => {
 });
 
 socket.on("receive-msg", (data) => {
-    updateFriendLastMessage(data.from, data.message);
+    const secretKey = "secure_" + [CURRENT_USER, data.from].sort().join("_") + "_v1@2026";
 
-    if (data.from === receiverId) {
-        addMessage(data.message, "received");
+    const bytes =CryptoJS.AES.decrypt(data.message,secretKey)
+    const decrypted= bytes.toString(CryptoJS.enc.Utf8)
+    const finalMsg = decrypted || data.message;
+    updateFriendLastMessage(data.from, finalMsg);
+
+    if (receiverId && data.from === receiverId) {
+        addMessage(finalMsg, "received");
 
         setTimeout(() => {
             chatBox.scrollTop = chatBox.scrollHeight;
         }, 50);
     }
+});
+let timeout;
+const inputUsername= document.querySelector('#searchUser');
+const resultsDiv = document.querySelector(".results");
+
+inputUsername.addEventListener("input", () => {
+    console.log("Event Triggered");
+    clearTimeout(timeout);
+
+    timeout = setTimeout(async () => {
+        const query = inputUsername.value;
+
+        if (!query) {
+            resultsDiv.innerHTML = "";
+            return;
+        }
+
+        const res = await fetch(`/search-users?q=${query}`);
+        const users = await res.json();
+
+        resultsDiv.innerHTML = "";
+
+        users.forEach(user => {
+    const div = document.createElement("div");
+    div.classList.add("user-card");
+
+    div.innerHTML = `
+    <div class="user-info">
+        <div class="avatar1">
+            ${user.username.charAt(0).toUpperCase()}
+        </div>
+        <span class="username">${user.username}</span>
+    </div>
+    <form action="/adduser/${user._id}" method="post" class="add-form">
+            <button type="submit" class="add-btn">+</button>
+        </form>
+`;
+
+    resultsDiv.appendChild(div);
+});
+    }, 300);
 });
