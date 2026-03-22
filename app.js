@@ -4,7 +4,7 @@ const express= require('express')
 const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
-
+const PORT = process.env.PORT || 3000;
 const app= express();
 const server = createServer(app);
 const io = new Server(server);
@@ -41,6 +41,6 @@ app.use((req, res) => {
     res.status(404).send('Page Not Found');
 });
 
-server.listen(3000, () => {
+server.listen(PORT, () => {
     console.log('Server running on port 3000');
 })
