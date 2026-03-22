@@ -53,7 +53,15 @@ module.exports.verSign = async (req, res) => {
                 });
             }
         } else {
-            const otp= await sendOtp(email);
+            let otp;
+            try {
+                otp = await sendOtp(email);
+            } catch (mailError) {
+                console.log("OTP mail error (signup):", mailError.message);
+                return res.status(503).json({
+                    message: "OTP service is unavailable. Please try again in a few minutes."
+                });
+            }
             console.log("Generated OTP:", otp);
             if(!otp){
                 return res.status(500).json({message: "Failed to send OTP"})
@@ -80,7 +88,7 @@ module.exports.verSign = async (req, res) => {
             return res.redirect('/verify-otp');
         }
     } catch (err) {
-        console.log(err);
+        console.log("verSign error:", err.message);
         return res.status(500).json({ message: "Server error" });
     }
 }
@@ -119,7 +127,16 @@ module.exports.verLogin = async (req, res) => {
             });
         }
         
-        const otp= await sendOtp(user.email);
+        let otp;
+        try {
+            otp = await sendOtp(user.email);
+        } catch (mailError) {
+            console.log("OTP mail error (login):", mailError.message);
+            return res.status(503).json({
+                message: "OTP service is unavailable. Please try again in a few minutes."
+            });
+        }
+
             if (!otp) {
                 return res.status(500).json({
                     message: "Failed to send OTP"
@@ -140,7 +157,7 @@ module.exports.verLogin = async (req, res) => {
             
             return res.redirect('/verify-otp');
     } catch (error) {
-        console.log(error);
+        console.log("verLogin error:", error.message);
         return res.status(500).json({ message: "Server error" });
     }
 }
@@ -256,7 +273,7 @@ module.exports.verifyOtp= async (req,res)=>{
         return res.json({success: true, message: "Login successful"});
     }
     } catch (error) {
-        console.log(error);
+        console.log("verifyOtp error:", error.message);
         res.status(500).json({ message: "Server error" });
     }
 }
