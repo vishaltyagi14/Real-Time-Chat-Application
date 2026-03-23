@@ -35,6 +35,7 @@ const cookieParser = require('cookie-parser')
 const cookieSecret = process.env.COOKIE_SECRET || 'your-secret-key-change-in-production';
 app.use(cookieParser(cookieSecret));
 
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine','ejs')
 app.use(express.static(path.join(__dirname,'public')))
 app.use(express.urlencoded({extended: true}))
