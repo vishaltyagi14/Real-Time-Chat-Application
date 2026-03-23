@@ -35,15 +35,24 @@ const cookieParser = require('cookie-parser')
 const cookieSecret = process.env.COOKIE_SECRET || 'your-secret-key-change-in-production';
 app.use(cookieParser(cookieSecret));
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine','ejs')
-app.engine('ejs', require('ejs').renderFile);
+const viewsPath = path.join(__dirname, 'views');
+console.log('EJS Views path set to:', viewsPath);
+app.set('views', viewsPath);
+app.set('view engine','ejs');
+// Explicitly set up EJS engine
+const ejs = require('ejs');
+app.engine('ejs', ejs.renderFile);
+console.log('EJS engine configured');
 app.use(express.static(path.join(__dirname,'public')))
 app.use(express.urlencoded({extended: true}))
 
-// Request logging
+// Request logging with more detail
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    const startTime = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - startTime;
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} - Status: ${res.statusCode} - ${duration}ms`);
+    });
     next();
 });
 

@@ -14,13 +14,13 @@ module.exports.signup = (req, res) => {
     res.render('signup');
 };
 module.exports.otp=(req,res)=>{
-    res.render('verify-otp', (err, html) => {
-        if (err) {
-            console.error('Error rendering verify-otp:', err.message);
-            return res.status(500).send('Error loading OTP verification page: ' + err.message);
-        }
-        res.send(html);
-    });
+    try {
+        console.log('📄 GET /verify-otp route accessed');
+        res.render('verify-otp');
+    } catch (error) {
+        console.error('Exception in otp route:', error.message, error.stack);
+        res.status(500).send('Server error: ' + error.message);
+    }
 }
 
 module.exports.updateProfile = async (req, res) => {
