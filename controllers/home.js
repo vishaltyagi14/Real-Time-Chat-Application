@@ -14,7 +14,13 @@ module.exports.signup = (req, res) => {
     res.render('signup');
 };
 module.exports.otp=(req,res)=>{
-    res.render('verify-otp')
+    res.render('verify-otp', (err, html) => {
+        if (err) {
+            console.error('Error rendering verify-otp:', err.message);
+            return res.status(500).send('Error loading OTP verification page: ' + err.message);
+        }
+        res.send(html);
+    });
 }
 
 module.exports.updateProfile = async (req, res) => {

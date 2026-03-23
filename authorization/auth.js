@@ -85,6 +85,7 @@ module.exports.verSign = async (req, res) => {
                 maxAge: 10*60*1000 // 10 minutes
             });
             
+            console.log(`Signup: OTP sent for ${email}, redirecting to /verify-otp`);
             return res.redirect('/verify-otp');
         }
     } catch (err) {
@@ -155,6 +156,7 @@ module.exports.verLogin = async (req, res) => {
                 maxAge: 10*60*1000 // 10 minutes
             });
             
+            console.log(`Login: OTP sent for ${user.email}, redirecting to /verify-otp`);
             return res.redirect('/verify-otp');
     } catch (error) {
         console.log("verLogin error:", error.message);

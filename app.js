@@ -37,6 +37,7 @@ app.use(cookieParser(cookieSecret));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine','ejs')
+app.engine('ejs', require('ejs').renderFile);
 app.use(express.static(path.join(__dirname,'public')))
 app.use(express.urlencoded({extended: true}))
 
@@ -49,8 +50,16 @@ app.use((req, res, next) => {
 app.use('/',routes)
 
 app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(err.status || 500).send(err.message || 'Server Error');
+    console.error('Error:', {
+        message: err.message,
+        code: err.code,
+        status: err.status,
+        stack: err.stack
+    });
+    res.status(err.status || 500).send({
+        error: err.message || 'Server Error',
+        path: req.path
+    });
 });
 
 app.use((req, res) => {
