@@ -10,16 +10,16 @@ async function sendOTP(email) {
       throw new Error("Invalid email address provided");
     }
 
-    // Validate Resend configuration
-    if (!process.env.RESEND_API_KEY) {
-      const errorMsg = "Resend is not configured. Set RESEND_API_KEY in environment variables.";
+    // Validate Brevo configuration
+    if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASS) {
+      const errorMsg = "Brevo SMTP is not configured. Set BREVO_SMTP_USER and BREVO_SMTP_PASS in environment variables.";
       console.error("CRITICAL:", errorMsg);
       throw new Error(errorMsg);
     }
 
     // Validate mailFrom is set
     if (!mailFrom) {
-      throw new Error("Mail FROM address is not configured. Set MAIL_FROM in environment variables.");
+      throw new Error("Mail FROM address is not configured. Set BREVO_SMTP_USER in environment variables.");
     }
 
     const otp = genOtp();
@@ -49,7 +49,7 @@ async function sendOTP(email) {
 
     console.log(`✅ OTP sent successfully to ${email}`);
 
-    return otp; // Return OTP to store in DB/session
+    return otp;
   } catch (error) {
     console.error("❌ Error sending OTP mail:", error.message, error.code || "NO_CODE");
     throw error;

@@ -1,53 +1,29 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const mailFrom = process.env.MAIL_FROM || 'onboarding@resend.dev';
+const mailFrom = process.env.BREVO_SMTP_USER;
 
 let transporter;
 
-if (resendApiKey) {
-    const resend = new Resend(resendApiKey);
+if (process.env.BREVO_SMTP_USER && process.env.BREVO_SMTP_PASS) {
+    transporter = nodemailer.createTransport({
+        host: 'smtp-relay.brevo.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.BREVO_SMTP_USER,
+            pass: process.env.BREVO_SMTP_PASS,
+        },
+    });
 
-    transporter = {
-        sendMail: async (mailOptions) => {
-            try {
-                console.log(`📨 Sending OTP email to: ${mailOptions.to}`);
-
-                const { data, error } = await resend.emails.send({
-                    from: mailOptions.from || mailFrom,
-                    to: mailOptions.to,
-                    subject: mailOptions.subject,
-                    html: mailOptions.html || `<p>${mailOptions.text}</p>`,
-                });
-
-                if (error) {
-                    console.error(`❌ Resend Error:`, error);
-                    throw new Error(error.message);
-                }
-
-                console.log(`✅ Email sent successfully. Message ID:`, data.id);
-                return { messageId: data.id };
-            } catch (error) {
-                console.error(`❌ Resend Error:`, error.message);
-                throw error;
-            }
-        }
-    };
-
-    console.log(`\n📧 Mail Transport Config (Resend):`);
-    console.log(`   Service: Resend Transactional Email`);
-    console.log(`   From: ${mailFrom}`);
-    console.log(`   Status: Ready\n`);
+    console.log(`\n📧 Mail Transport: Brevo SMTP | From: ${mailFrom}\n`);
 } else {
-    console.error('\n⚠️  CRITICAL: RESEND_API_KEY not configured.');
-    
+    console.error('\n⚠️  BREVO_SMTP_USER or BREVO_SMTP_PASS not set.\n');
     transporter = {
         sendMail: async () => {
-            throw new Error('Resend API is not configured. Set RESEND_API_KEY in environment variables.');
+            throw new Error('Brevo SMTP is not configured.');
         }
     };
 }
 
 transporter.mailConfig = { mailFrom };
-
 module.exports = transporter;
