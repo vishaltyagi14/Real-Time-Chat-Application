@@ -11,15 +11,15 @@ async function sendOTP(email) {
     }
 
     // Validate Brevo configuration
-    if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASS) {
-      const errorMsg = "Brevo SMTP is not configured. Set BREVO_SMTP_USER and BREVO_SMTP_PASS in environment variables.";
+    if (!process.env.BREVO_API_KEY) {
+      const errorMsg = "Brevo API is not configured. Set BREVO_API_KEY in environment variables.";
       console.error("CRITICAL:", errorMsg);
       throw new Error(errorMsg);
     }
 
     // Validate mailFrom is set
     if (!mailFrom) {
-      throw new Error("Mail FROM address is not configured. Set BREVO_SMTP_USER in environment variables.");
+      throw new Error("Mail FROM address is not configured. Set MAIL_FROM in environment variables.");
     }
 
     const otp = genOtp();
