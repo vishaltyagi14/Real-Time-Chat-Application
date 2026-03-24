@@ -1,45 +1,53 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require('resend');
 
-const smtpHost = process.env.SMTP_HOST;
-const smtpPort = Number(process.env.SMTP_PORT || 587);
-const smtpUser = process.env.SMTP_USER || process.env.EMAIL;
-const smtpPass = process.env.SMTP_PASS || process.env.PASS;
-const mailFrom = process.env.MAIL_FROM || smtpUser;
+const resendApiKey = process.env.RESEND_API_KEY;
+const mailFrom = process.env.MAIL_FROM || 'onboarding@resend.dev';
 
-// Log config on startup (hide sensitive data)
-if (smtpUser && smtpPass) {
-    console.log(`\n📧 Mail Transport Config:`);
-    console.log(`   Host: ${smtpHost ? `${smtpHost}:${smtpPort}` : 'Gmail Service'}`);
-    console.log(`   User: ${smtpUser.substring(0, 3)}...${smtpUser.substring(smtpUser.length - 3)}`);
-    console.log(`   From: ${mailFrom}\n`);
+let transporter;
+
+if (resendApiKey) {
+    const resend = new Resend(resendApiKey);
+
+    transporter = {
+        sendMail: async (mailOptions) => {
+            try {
+                console.log(`📨 Sending OTP email to: ${mailOptions.to}`);
+
+                const { data, error } = await resend.emails.send({
+                    from: mailOptions.from || mailFrom,
+                    to: mailOptions.to,
+                    subject: mailOptions.subject,
+                    html: mailOptions.html || `<p>${mailOptions.text}</p>`,
+                });
+
+                if (error) {
+                    console.error(`❌ Resend Error:`, error);
+                    throw new Error(error.message);
+                }
+
+                console.log(`✅ Email sent successfully. Message ID:`, data.id);
+                return { messageId: data.id };
+            } catch (error) {
+                console.error(`❌ Resend Error:`, error.message);
+                throw error;
+            }
+        }
+    };
+
+    console.log(`\n📧 Mail Transport Config (Resend):`);
+    console.log(`   Service: Resend Transactional Email`);
+    console.log(`   From: ${mailFrom}`);
+    console.log(`   Status: Ready\n`);
+} else {
+    console.error('\n⚠️  CRITICAL: RESEND_API_KEY not configured.');
+    
+    transporter = {
+        sendMail: async () => {
+            throw new Error('Resend API is not configured. Set RESEND_API_KEY in environment variables.');
+        }
+    };
 }
 
-const transporter = nodemailer.createTransport(
-    smtpHost
-        ? {
-            host: smtpHost,
-            port: smtpPort,
-            secure: smtpPort === 465,
-            auth: {
-                user: smtpUser,
-                pass: smtpPass
-            }
-        }
-        : {
-            service: "gmail",
-            auth: {
-                user: smtpUser,
-                pass: smtpPass
-            }
-        }
-);
-
-transporter.mailConfig = {
-    smtpHost,
-    smtpPort,
-    smtpUser,
-    smtpPass,
-    mailFrom
-};
+transporter.mailConfig = { mailFrom };
 
 module.exports = transporter;
