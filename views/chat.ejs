@@ -23,38 +23,39 @@
     <div class="container">
         <div class="left">
             <div class="allUsers">
-                <h2 style="color: #0062db; position: relative; left: 21px; top: 10px;">All Users</h2>
+                <div class="allUsers-header">
+                    <h2 class="allUsers-title">
+                        <i class="fa-solid fa-users"></i>
+                        <span>All Users</span>
+                    </h2>
+                </div>
                 <div class="searchUsers">
-                    <i style="position: absolute; z-index: 2;" class="fa-solid fa-magnifying-glass"></i>
-                    <input type="search" name="search" id="searchUser" placeholder="Search Usersname...">
-                    <div class="results">
-                        <i class="fa-solid fa-xmark" id="closeAllSearch" style="cursor: pointer;"></i>
-                    </div>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" name="search" id="searchUser" placeholder="Search users...">
+                    <!-- <i class="fa-solid fa-xmark" id="closeAllSearch" style="display: none;"></i> -->
+                    <div class="results"></div>
                 </div>
                 <div class="dbUsers">
-                    &nbsp;
                     <% users.forEach(user => { %>
                     <% if (user._id.toString() !== currentUser && !addedUserIds.includes(user._id.toString())) { %>
-                    <div class="msg">
-                        <div class="profile avatar-badge">
-                            <div class="avatar" style="background: hsl(<%= user._id.toString().split('').reduce((a,b)=>a+b.charCodeAt(0),0) % 360 %>, 70%, 60%);" title="<%= user.name %>">
-                                <%= user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) %>
+                    <div class="user-card">
+                        <div class="user-card-content">
+                            <div class="profile avatar-badge">
+                                <div class="avatar" style="background: hsl(<%= user._id.toString().split('').reduce((a,b)=>a+b.charCodeAt(0),0) % 360 %>, 70%, 60%);" title="<%= user.name %>">
+                                    <%= user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) %>
+                                </div>
+                            </div>
+                            <div class="user-info">
+                                <h4 class="user-name"><%= user.name %></h4>
+                                <span class="user-username">@<%= user.username%></span>
                             </div>
                         </div>
-
-                        <div class="Container">
-                            <div class="dBname">
-                                <h4><%= user.name %></h4>
-                            </div>
-                        
-                            <div class="username">
-                                <span>@<%= user.username%></span>
-                            </div>
-
-                        </div>
-                        <form action="/adduser/<%= user._id%>" method="post"><button type="submit" class="add-btn">+</button></form>
+                        <form action="/adduser/<%= user._id%>" method="post" class="user-card-form">
+                            <button type="submit" class="add-user-btn" title="Add user">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </button>
+                        </form>
                     </div>
-                    <hr>
                     <% } %>
                     <% }) %>
                 </div>
@@ -148,7 +149,7 @@
             <div class="encr"><h4><span style="color: #e0a000;">🔒Encryption</span> Enabled</h4></div>
             <div class="send">
                 <div class="attr">
-                    <i class="fa-regular fa-face-smile" id="ico"></i>
+                    <i class="fa-regular fa-face-smile emojiBtn" id="ico"></i>
                     <i class="fa-solid fa-paperclip" id="ico"></i>
                     <input type="text" id="message" placeholder="Write your message...">
                     <i class="fa-solid fa-paper-plane" id="msg" style="color: #1a7ffb;"></i>
@@ -197,7 +198,10 @@
                 </div>
             </form>
             <div class="logout">
-                <a href="/logout">Logout</a>
+                <a href="/logout" class="logout-btn">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
             </div>
         </div>
     </div>
@@ -209,6 +213,7 @@
 </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.1.1/dist/index.min.js"></script>
     <script src="/javascripts/profile.js"></script>
     <script src="/javascripts/chat.js"></script>
 </body>

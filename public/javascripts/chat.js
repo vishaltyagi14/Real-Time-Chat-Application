@@ -177,12 +177,8 @@ async function handleDeleteFriend(e) {
     const btn = e.currentTarget;
     const friendId = btn.dataset.friendId;  // Changed from dataset.id to dataset.friendId
     
-    console.log("Delete button clicked");
-    console.log("Friend ID:", friendId);
-    
     if (!friendId) {
         console.error("Friend ID not found on button");
-        console.log("Button data attributes:", btn.dataset);
         return;
     }
     
@@ -198,9 +194,7 @@ async function handleDeleteFriend(e) {
             method: 'DELETE'
         });
         
-        console.log("Response status:", response.status);
         const data = await response.json();
-        console.log("Response data:", data);
         
         if (!response.ok) {
             throw new Error('Failed to remove friend');
@@ -447,44 +441,111 @@ socket.on("receive-msg", (data) => {
         }, 50);
     }
 });
+
 let timeout;
-const inputUsername= document.querySelector('#searchUser');
+const inputUsername = document.querySelector('#searchUser');
 const resultsDiv = document.querySelector(".results");
+const closeAllSearchBtn = document.querySelector('#closeAllSearch');
 
+// Clear search results and close button
+if (closeAllSearchBtn) {
+    closeAllSearchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        inputUsername.value = '';
+        resultsDiv.innerHTML = '';
+        closeAllSearchBtn.style.display = 'none';
+        inputUsername.focus();
+    });
+}
+
+// Search functionality with improved logic
 inputUsername.addEventListener("input", () => {
-    console.log("Event Triggered");
     clearTimeout(timeout);
-
+    
+    const query = inputUsername.value.trim();
+    
+    if (!query) {
+        resultsDiv.innerHTML = '';
+        closeAllSearchBtn.style.display = 'none';
+        return;
+    }
+    
+    // Show close button when there's text
+    // closeAllSearchBtn.style.display = 'block';
+    
+    // Show loading state
+    resultsDiv.innerHTML = '<div style="padding: 15px; text-align: center; color: #999; font-size: 14px;"><i class="fa-solid fa-spinner fa-spin"></i> Searching...</div>';
+    
     timeout = setTimeout(async () => {
-        const query = inputUsername.value;
-
-        if (!query) {
-            resultsDiv.innerHTML = "";
-            return;
+        try {
+            // Get current user and added user IDs from the page if available
+            const currentUser = typeof CURRENT_USER !== 'undefined' ? CURRENT_USER : 'unknown';
+            const addedUserIds = Array.from(document.querySelectorAll('.friend-card[data-id]'))
+                .map(el => el.getAttribute('data-id'))
+                .filter(Boolean);
+            
+            const queryParams = new URLSearchParams({
+                q: query,
+                currentUser: currentUser,
+                addedUserIds: JSON.stringify(addedUserIds)
+            });
+            
+            const res = await fetch(`/search-users?${queryParams}`);
+            
+            if (!res.ok) {
+                throw new Error('Search failed');
+            }
+            
+            const users = await res.json();
+            resultsDiv.innerHTML = '';
+            
+            if (users.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding: 15px; text-align: center; color: #999; font-size: 14px;">No users found matching "' + query + '"</div>';
+                return;
+            }
+            
+            // Display search results
+            users.forEach(user => {
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('search-result-item');
+                
+                const displayName = user.name || user.username;
+                const displayUsername = user.username;
+                
+                resultItem.innerHTML = `
+                    <div class="search-result-info">
+                        <span class="search-result-name">${displayName}</span>
+                        <span class="search-result-username">@${displayUsername}</span>
+                    </div>
+                    <form action="/adduser/${user._id}" method="post" style="margin: 0;" class="search-add-form">
+                        <button type="submit" class="add-user-btn" title="Add user">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </button>
+                    </form>
+                `;
+                
+                resultsDiv.appendChild(resultItem);
+            });
+        } catch (err) {
+            console.error('Search error:', err);
+            resultsDiv.innerHTML = '<div style="padding: 15px; text-align: center; color: #d32f2f; font-size: 14px;">Error searching users</div>';
         }
-
-        const res = await fetch(`/search-users?q=${query}`);
-        const users = await res.json();
-
-        resultsDiv.innerHTML = "";
-
-        users.forEach(user => {
-    const div = document.createElement("div");
-    div.classList.add("user-card");
-
-    div.innerHTML = `
-    <div class="user-info">
-        <div class="avatar1">
-            ${user.username.charAt(0).toUpperCase()}
-        </div>
-        <span class="username">${user.username}</span>
-    </div>
-    <form action="/adduser/${user._id}" method="post" class="add-form">
-            <button type="submit" class="add-btn">+</button>
-        </form>
-`;
-
-    resultsDiv.appendChild(div);
-});
     }, 300);
 });
+
+const emojiBtn = document.querySelector(".emojiBtn");
+if (emojiBtn) {
+    const picker = new EmojiButton();
+    const input = document.querySelector("#message"); 
+    
+    emojiBtn.addEventListener('click', ()=>{
+        picker.togglePicker(emojiBtn);
+    });
+    
+    picker.on('emoji', (emoji)=>{
+        input.value += emoji;
+        input.focus();
+    });
+} else {
+    console.warn('Emoji button not found in DOM');
+}
