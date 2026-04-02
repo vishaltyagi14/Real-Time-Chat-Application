@@ -177,3 +177,12 @@ body {
 .timer p{
     color: white;
 }
+@media(max-width: 496px){
+    .auth input.num {
+  width: 11vw;
+  height: 50px;
+}
+.auth input[type="submit"] {
+  width: 80vw;
+}
+}
