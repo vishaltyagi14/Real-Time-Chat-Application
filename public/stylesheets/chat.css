@@ -1353,7 +1353,7 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    height: 95vh;
+    height: 93vh;
     z-index: 10;
     transition: transform 0.3s ease;
   }
@@ -1367,7 +1367,7 @@ body {
     left: 0;
     top: 0;
     width: 100vw;
-    height: 95vh;
+    height: 93vh;
     z-index: 9;
     display: none;
   }
@@ -1386,4 +1386,10 @@ body {
     top: 0px;
     left: 0px;
   }
+  .attr i {
+  font-size:17px;
+}
+#message{
+  width: 70%;
+}
 }
