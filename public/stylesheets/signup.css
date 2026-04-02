@@ -140,3 +140,8 @@ body {
 .main p{
     color: rgb(223, 223, 223);
 }
+@media(max-width: 471px){
+    .auth form input{
+    width: 80vw;
+}
+}

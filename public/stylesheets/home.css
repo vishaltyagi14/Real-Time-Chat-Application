@@ -223,3 +223,12 @@ body {
     max-width: 350px;
   }
 }
+
+@media(max-width: 471px){
+  .auth{
+    flex-direction: column;
+  }
+  #loginBtn{
+    width: 230px;
+  }
+}
