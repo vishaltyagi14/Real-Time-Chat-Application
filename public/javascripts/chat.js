@@ -14,8 +14,61 @@ const onlineStatus = document.getElementById("onlineStatus");
 const chatAvatar = document.getElementById("chatAvatar");
 const deleteChatBtn = document.getElementById("deleteChatBtn");
 const removeFriendBtn = document.getElementById("removeFriendBtn");
+const emptyState = document.getElementById("emptyState");
+const backBtn = document.getElementById("backBtn");
 
 let receiverId = null;
+
+// Show empty state
+function showEmptyState() {
+    if (emptyState) {
+        emptyState.classList.remove("hidden");
+    }
+}
+
+// Hide empty state
+function hideEmptyState() {
+    if (emptyState) {
+        emptyState.classList.add("hidden");
+    }
+}
+
+// Go back to conversations list on mobile
+function goBackToConversations() {
+    const container = document.querySelector('.container');
+    if (container.classList.contains('chat-open')) {
+        container.classList.remove('chat-open');
+    }
+    receiverId = null;
+    chatBox.innerHTML = "";
+    showEmptyState();
+    chatUserName.textContent = "Select a chat";
+    deleteChatBtn.style.display = "none";
+    removeFriendBtn.style.display = "none";
+    backBtn.style.display = "none";
+    
+    // Remove active state from all friends
+    document.querySelectorAll('.friend-card').forEach(card => {
+        card.classList.remove('active');
+    });
+}
+
+// Show/hide back button based on screen size
+function updateBackButtonVisibility() {
+    if (window.innerWidth <= 650 && receiverId) {
+        backBtn.style.display = "inline-block";
+    } else {
+        backBtn.style.display = "none";
+    }
+}
+
+// Add back button event listener
+if (backBtn) {
+    backBtn.addEventListener("click", goBackToConversations);
+}
+
+// Update back button visibility on window resize
+window.addEventListener("resize", updateBackButtonVisibility);
 
 function getInitials(name) {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
@@ -116,8 +169,16 @@ async function handleFriendCardClick(e) {
     markFriendActive(card);
     updateChatHeader(friendName, receiverId);
     updateHeaderButtonsVisibility();
+    updateBackButtonVisibility();
     
     chatBox.innerHTML = "";
+    showEmptyState();
+    
+    // Toggle chat view on mobile
+    const container = document.querySelector('.container');
+    if (window.innerWidth <= 650) {
+        container.classList.add('chat-open');
+    }
 
     try {
         const res = await fetch(`/messages/${CURRENT_USER}/${receiverId}`);
@@ -211,6 +272,7 @@ async function handleDeleteFriend(e) {
         if (receiverId === friendId) {
             receiverId = null;
             chatBox.innerHTML = "";
+            showEmptyState();
             chatUserName.textContent = "Select a chat";
             deleteChatBtn.style.display = "none";
             removeFriendBtn.style.display = "none";
@@ -261,6 +323,7 @@ async function handleDeleteChat(e) {
         
         // Clear chat box
         chatBox.innerHTML = "";
+        showEmptyState();
         alert("Chat deleted successfully");
     } catch (error) {
         console.error('Error deleting chat:', error);
@@ -380,6 +443,8 @@ function updateChatAvatarWithPicture(profilePicture) {
 
 function addMessage(text, type) {
     if (!chatBox) return;
+    
+    hideEmptyState();
     
     const div = document.createElement("div");
     div.classList.add("message", type);

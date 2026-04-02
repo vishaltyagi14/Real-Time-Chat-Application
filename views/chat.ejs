@@ -137,16 +137,22 @@
                         </div>
                     </div>
                     <div class="header-icons">
-                        
+                        <i class="fa-solid fa-arrow-left" id="backBtn" title="Back to Chats" style="cursor: pointer; color: var(--primary); font-size: 1.2rem; display: none;"></i>
                         <i class="fa-solid fa-trash" id="deleteChatBtn" title="Delete Chat" style="cursor: pointer; color: #d32f2f; font-size: 1.2rem; display: none;"></i>
                         <i class="fa-solid fa-user-minus" id="removeFriendBtn" title="Remove Friend" style="cursor: pointer; color: #ff6f00; font-size: 1.2rem; display: none;"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="chat">
+            <div class="chat" id="chatContainer">
+                <div class="chat-empty-state" id="emptyState">
+                    <div class="chat-empty-icon">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <div class="chat-empty-text">Select a conversation to start chatting</div>
+                </div>
             </div>
-            <div class="encr"><h4><span style="color: #e0a000;">🔒Encryption</span> Enabled</h4></div>
+            <div class="encr" id="encryptionStatus"><h4><span style="color: #e0a000;">🔒 Encryption</span> Enabled</h4></div>
             <div class="send">
                 <div class="attr">
                     <i class="fa-regular fa-face-smile emojiBtn" id="ico"></i>
