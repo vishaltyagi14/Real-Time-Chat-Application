@@ -1343,12 +1343,10 @@ body {
 }
 
 @media (max-width: 650px) {
-  body {
-    overflow: hidden;
-  }
   
   .container {
     position: relative;
+    height: 90vh;
   }
   
   .left {
