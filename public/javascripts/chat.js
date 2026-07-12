@@ -226,7 +226,6 @@ async function handleFriendCardClick(e) {
             chatBox.scrollTop = chatBox.scrollHeight;
         }, 100);
     } catch (err) {
-        console.error("Error loading messages:", err);
         addMessage("Failed to load messages", "error");
     }
 }
@@ -239,7 +238,6 @@ async function handleDeleteFriend(e) {
     const friendId = btn.dataset.friendId;  // Changed from dataset.id to dataset.friendId
     
     if (!friendId) {
-        console.error("Friend ID not found on button");
         return;
     }
     
@@ -280,7 +278,6 @@ async function handleDeleteFriend(e) {
         
         alert(`${friendName} has been removed from your friends`);
     } catch (error) {
-        console.error('Error removing friend:', error);
         alert('Failed to remove friend. Please try again.');
     }
 }
@@ -299,48 +296,31 @@ function handleRemoveFriend() {
 }
 
 // Handle delete chat button click
-async function handleDeleteChat(e) {
-    const card= e.currentTarget;
-    receiverId = friend.dataset.id;
-    // console.log(receiverId)
+async function handleDeleteChat() {
+
     if (!receiverId) {
         alert("No chat selected");
         return;
     }
-    
-    if (!confirm("Are you sure you want to delete this chat? This will remove all messages.")) {
+
+    if (!confirm("Are you sure you want to delete this chat?")) {
         return;
     }
-    
+
     try {
         const response = await fetch(`/deleteMessages/${receiverId}`, {
-            method: 'DELETE'
+            method: "DELETE"
         });
-        
+
         if (!response.ok) {
-            throw new Error('Failed to delete chat');
+            throw new Error("Failed to delete chat");
         }
-        
-        // Clear chat box
+
         chatBox.innerHTML = "";
         showEmptyState();
         alert("Chat deleted successfully");
-    } catch (error) {
-        console.error('Error deleting chat:', error);
-        alert('Failed to delete chat. Please try again.');
-    }
-}
-
-// Handle remove friend from header
-function handleRemoveFriend() {
-    if (!receiverId) {
-        alert("No friend selected");
-        return;
-    }
-    
-    const deleteBtn = document.querySelector(`.delete-friend-btn[data-friend-id="${receiverId}"]`);
-    if (deleteBtn) {
-        deleteBtn.click();
+    } catch (err) {
+        // Silently fail
     }
 }
 
@@ -592,7 +572,6 @@ inputUsername.addEventListener("input", () => {
                 resultsDiv.appendChild(resultItem);
             });
         } catch (err) {
-            console.error('Search error:', err);
             resultsDiv.innerHTML = '<div style="padding: 15px; text-align: center; color: #d32f2f; font-size: 14px;">Error searching users</div>';
         }
     }, 300);
@@ -611,6 +590,4 @@ if (emojiBtn) {
         input.value += emoji;
         input.focus();
     });
-} else {
-    console.warn('Emoji button not found in DOM');
 }

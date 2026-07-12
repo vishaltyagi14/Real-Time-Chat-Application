@@ -29,9 +29,20 @@ module.exports.deleteMessages = async (req, res) => {
     try {
 
         const { friendId } = req.params;
-const receiverId = friendId;
+        const receiverId = friendId;
         const currentUserId = req.user._id;
 
+        console.log("Current User:", req.user._id);
+        console.log("Friend:", req.params.friendId);
+
+        const chats = await messageModel.find({
+    $or: [
+        { sender: req.user._id, receiver: req.params.friendId },
+        { sender: req.params.friendId, receiver: req.user._id }
+    ]
+});
+
+console.log(chats);
         if (!receiverId) {
             return res.status(400).json({ message: "Friend ID is required" });
         }
